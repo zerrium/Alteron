@@ -1,0 +1,8 @@
+#--------------------------------#
+#  Config for Zstats v1.0 - 2.0  #
+#--------------------------------#
+#      Developed by: Zerrium     #
+#--------------------------------#
+
+##Others
+use_debug: false #Do not touch if you do not know what this is
