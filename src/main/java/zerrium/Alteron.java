@@ -5,17 +5,29 @@ import org.bukkit.ChatColor;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Alteron extends JavaPlugin {
+    private JSONObject lang;
 
     private static ArrayList<AlteronCategory> categories;
 
     @Override
     public void onEnable() {
         System.out.println(ChatColor.YELLOW+"[Alteron] v0.1 by zerrium");
+        try {
+            lang = (JSONObject) new JSONParser().parse(new FileReader(new File (getDataFolder(), "lang.json")));
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
         //Objects.requireNonNull(this.getCommand("zstats")).setExecutor(new ZstatsUpdater());
         //Objects.requireNonNull(getCommand("zstats")).setTabCompleter(this);
 
@@ -62,7 +74,7 @@ public class Alteron extends JavaPlugin {
             }else if(stage.equals("AddCategory")) continue;
             for (String s : category) {
                 if (key.contains(s)) {
-                    categories.get(categories.indexOf(new AlteronCategory(s))).getAdvancements().add(new AlteronAdvancement(key.replace(s, ""), new ArrayList<>(a.getCriteria())));
+                    categories.get(categories.indexOf(new AlteronCategory(s))).getAdvancements().add(new AlteronAdvancement(key.replace(s+"/", ""), new ArrayList<>(a.getCriteria())));
                 }
             }
         }
@@ -70,11 +82,14 @@ public class Alteron extends JavaPlugin {
 
     private void printAllAdvacementLists(){
         for(AlteronCategory ac:categories){
-            System.out.println(ac.getCategory());
+            System.out.println("Category: " + ac.getCategory());
+            System.out.println("Advancements:" + "\n");
             for(AlteronAdvancement aa:ac.getAdvancements()){
-                System.out.println(aa.getAdvancement());
+                String temp = lang.get(ac.getCategory()+"."+aa.getAdvancement()+".title").toString();
+                System.out.println("   " + (temp==null ? aa.getAdvancement() : temp));
+                System.out.println("   Criteria:");
                 for(String s:aa.getCriteria()){
-                    System.out.println(s);
+                    System.out.println("      " + s);
                 }
                 System.out.println();
             }
