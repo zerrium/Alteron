@@ -1,5 +1,6 @@
 package zerrium;
 
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.advancement.Advancement;
@@ -23,16 +24,22 @@ public class Alteron extends JavaPlugin {
     @Override
     public void onEnable() {
         System.out.println(ChatColor.YELLOW+"[Alteron] v0.1 by zerrium");
-        try {
-            lang = (JSONObject) new JSONParser().parse(new FileReader(new File (getDataFolder(), "lang.json")));
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
         //Objects.requireNonNull(this.getCommand("zstats")).setExecutor(new ZstatsUpdater());
         //Objects.requireNonNull(getCommand("zstats")).setTabCompleter(this);
 
         //Bukkit.getPluginManager().disablePlugin(this);
-
+        saveDefaultConfig();
+        try {
+            lang = (JSONObject) new JSONParser().parse(new FileReader(new File (getDataFolder(), "lang.json")));
+        } catch (IOException | ParseException e) {
+            try {
+                //Files.copy(this.getClass().getResourceAsStream("lang.json"), getDataFolder().toPath(), StandardCopyOption.REPLACE_EXISTING);
+                FileUtils.copyToFile(this.getClass().getResourceAsStream("/lang.json"), new File(getDataFolder(),"lang.json"));
+                lang = (JSONObject) new JSONParser().parse(new FileReader(new File (getDataFolder(), "lang.json")));
+            } catch (IOException | ParseException ioException) {
+                ioException.printStackTrace();
+            }
+        }
         getServer().getScheduler().scheduleSyncDelayedTask(this, this::getAllAdvancementList); //Wait for all plugins to load
     }
 
@@ -85,8 +92,13 @@ public class Alteron extends JavaPlugin {
             System.out.println("Category: " + ac.getCategory());
             System.out.println("Advancements:" + "\n");
             for(AlteronAdvancement aa:ac.getAdvancements()){
-                String temp = lang.get(ac.getCategory()+"."+aa.getAdvancement()+".title").toString();
-                System.out.println("   " + (temp==null ? aa.getAdvancement() : temp));
+                String temp;
+                try{
+                    temp = lang.get(ac.getCategory()+"."+aa.getAdvancement()+".title").toString();
+                }catch (NullPointerException e){
+                    temp = aa.getAdvancement();
+                }
+                System.out.println("   " + temp);
                 System.out.println("   Criteria:");
                 for(String s:aa.getCriteria()){
                     System.out.println("      " + s);
