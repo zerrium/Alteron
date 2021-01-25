@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.json.simple.JSONObject;
@@ -28,15 +29,22 @@ public class Alteron extends JavaPlugin {
         //Objects.requireNonNull(getCommand("zstats")).setTabCompleter(this);
 
         //Bukkit.getPluginManager().disablePlugin(this);
-        saveDefaultConfig();
-        try {
-            lang = (JSONObject) new JSONParser().parse(new FileReader(new File (getDataFolder(), "lang.json")));
-        } catch (IOException | ParseException e) {
+        this.saveDefaultConfig();
+        FileConfiguration fc = this.getConfig();
+        boolean modified_lang_json = fc.getBoolean("modified_lang_json");
+
+        if(!new File(getDataFolder(), "lang.json").exists()){
             try {
                 FileUtils.copyToFile(this.getClass().getResourceAsStream("/lang.json"), new File(getDataFolder(),"lang.json"));
-                lang = (JSONObject) new JSONParser().parse(new FileReader(new File (getDataFolder(), "lang.json")));
-            } catch (IOException | ParseException ioException) {
+            } catch (IOException ioException) {
                 ioException.printStackTrace();
+            }
+        }
+        if(modified_lang_json){
+            try {
+                lang = (JSONObject) new JSONParser().parse(new FileReader(new File (getDataFolder(), "lang.json")));
+            } catch (IOException | ParseException e) {
+                e.printStackTrace();
             }
         }
         getServer().getScheduler().scheduleSyncDelayedTask(this, this::getAllAdvancementList); //Wait for all plugins to load

@@ -4,5 +4,16 @@
 #      Developed by: Zerrium     #
 #--------------------------------#
 
-##Others
+## Language Option
+
+# The default language is lang.json file, if you want to customize, localize, modify the file make sure to back up first!
+# You can add your custom advancement too by using this format:
+# "Namespace:Category_Name.Advancement_Name.title": "Your Advancement Title Here",
+# "Namespace:Category_Name.Advancement_Name.description": "Your advancement description here",
+# After that you can check your lang.json file validity here: https://jsonformatter.curiousconcept.com/
+
+#Set this to true if you have modified your lang.json file
+modified_lang_json: false
+
+## Others
 use_debug: false #Do not touch if you do not know what this is
