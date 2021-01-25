@@ -33,7 +33,6 @@ public class Alteron extends JavaPlugin {
             lang = (JSONObject) new JSONParser().parse(new FileReader(new File (getDataFolder(), "lang.json")));
         } catch (IOException | ParseException e) {
             try {
-                //Files.copy(this.getClass().getResourceAsStream("lang.json"), getDataFolder().toPath(), StandardCopyOption.REPLACE_EXISTING);
                 FileUtils.copyToFile(this.getClass().getResourceAsStream("/lang.json"), new File(getDataFolder(),"lang.json"));
                 lang = (JSONObject) new JSONParser().parse(new FileReader(new File (getDataFolder(), "lang.json")));
             } catch (IOException | ParseException ioException) {
